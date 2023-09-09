@@ -1,17 +1,57 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { db } from "../db.js";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+export const getUsers = (_, res) => {
+  const q = "SELECT * FROM usuarios";
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  db.query(q, (err, data) => {
+    if (err) return res.json(err);
+
+    return res.status(200).json(data);
+  });
+};
+
+export const addUser = (req, res) => {
+  const q =
+    "INSERT INTO usuarios(`nome`, `email`, `fone`, `data_nascimento`) VALUES(?)";
+
+  const values = [
+    req.body.nome,
+    req.body.email,
+    req.body.fone,
+    req.body.data_nascimento,
+  ];
+
+  db.query(q, [values], (err) => {
+    if (err) return res.json(err);
+
+    return res.status(200).json("Usuário criado com sucesso.");
+  });
+};
+
+export const updateUser = (req, res) => {
+  const q =
+    "UPDATE usuarios SET `nome` = ?, `email` = ?, `fone` = ?, `data_nascimento` = ? WHERE `id` = ?";
+
+  const values = [
+    req.body.nome,
+    req.body.email,
+    req.body.fone,
+    req.body.data_nascimento,
+  ];
+
+  db.query(q, [...values, req.params.id], (err) => {
+    if (err) return res.json(err);
+
+    return res.status(200).json("Usuário atualizado com sucesso.");
+  });
+};
+
+export const deleteUser = (req, res) => {
+  const q = "DELETE FROM usuarios WHERE `id` = ?";
+
+  db.query(q, [req.params.id], (err) => {
+    if (err) return res.json(err);
+
+    return res.status(200).json("Usuário deletado com sucesso.");
+  });
+};
