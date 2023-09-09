@@ -19,7 +19,7 @@ const Container = styled.div`
 
 const Title = styled.h2``;
 
-function App() {
+export default function App() {
   const [users, setUsers] = useState([]);
   const [onEdit, setOnEdit] = useState(null);
 
